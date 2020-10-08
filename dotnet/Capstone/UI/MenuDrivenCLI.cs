@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
 namespace Capstone
 {
     public class MenuDrivenCLI : IBasicUserInterface
@@ -11,13 +10,11 @@ namespace Capstone
             Console.WriteLine();
             Console.WriteLine(message);
         }
-
         public void PauseOutput()
         {
             Console.WriteLine("Press enter to continue.");
             Console.ReadLine();
         }
-
         /// <summary>
         /// Displays the options and prompts the user to select until a valid option is selected.
         /// </summary>
@@ -26,15 +23,13 @@ namespace Capstone
         public Object PromptForSelection(Object[] options)
         {
             Object choice = null;
-            while(choice==null)
+            while (choice == null)
             {
                 DisplayMenuOptions(options);
                 choice = GetChoiceFromUserInput(options);
             }
-
             return choice;
         }
-
         /// <summary>
         /// Reads in what the user entered from the console. Returns null for an invalid selection.
         /// </summary>
@@ -58,26 +53,23 @@ namespace Capstone
             }
             if (choice == null)
             {
-			    Console.WriteLine("\n*** " + userInput + " is not a valid option ***\n");
+                Console.WriteLine("\n*** " + userInput + " is not a valid option ***\n");
             }
             return choice;
         }
-
         /// <summary>
         /// Display all of the menu options with option numbers starting at 1
         /// </summary>
         /// <param name="options">The options to display. Must have ToString overriden or be strings</param>
         private void DisplayMenuOptions(Object[] options)
         {
-
             Console.WriteLine();
             for (int i = 0; i < options.Length; i++)
             {
                 int optionNum = i + 1;
                 Console.WriteLine(optionNum + ") " + options[i]);
             }
-            Console.WriteLine("Please choose an option >>>");
+            Console.Write("Please choose an option >>> ");
         }
-
     }
 }
