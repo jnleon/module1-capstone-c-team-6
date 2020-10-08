@@ -10,15 +10,19 @@ namespace Capstone
         {
             Console.Clear();
             Console.Write("\n");
-            //ask user for filePath
+           
             string directory = @"C:\Users\Zachary\Workspace\module1-capstone-c-team-6\Example Files\Inventory.txt";
             string directoryJuan = @"C:\Users\Student\Workspace\module1-capstone-c-team-6\Example Files\Inventory.txt";
+
+            Dictionary<string, FoodProperties> itemsDicKeyValue = new Dictionary<string, FoodProperties>();
+
             using (StreamReader sw = new StreamReader(directoryJuan))
             {
-                Dictionary<string, FoodProperties> itemsDicKeyValue = new Dictionary<string, FoodProperties>();
+                Console.WriteLine(String.Format("{0, 0} |  {1,-21} | {2,-5} |  {3,0}", " ITEM KEY", "PRODUCT NAME", "STOCK" , "PRICE"));
+                Console.Write("---------------------------------------------------------\n");
+
                 while (!sw.EndOfStream)
                 {
-
                     //Make sure item is avaliable otherwise display SOLD OUT
                     string lineContents = sw.ReadLine();
 
@@ -30,7 +34,6 @@ namespace Capstone
                     int howManyItemsRemaining = 5;
 
                     decimal moneyMoneyPrice = decimal.Parse(items[2]);
-
                     FoodProperties valueItem;
 
                     switch (items[3])
@@ -43,7 +46,6 @@ namespace Capstone
                             valueItem = new TypesFood.Candy(foodName, moneyMoneyPrice, howManyItemsRemaining);
                             break;
 
-
                         case "Drink":
                             valueItem = new TypesFood.Drink(foodName, moneyMoneyPrice, howManyItemsRemaining);
                             break;
@@ -55,19 +57,24 @@ namespace Capstone
                     itemsDicKeyValue.Add(items[0], valueItem);
                 }
             }
+            foreach (KeyValuePair<string, FoodProperties> kvp in itemsDicKeyValue)
+            {
+                if (kvp.Value.HowManyItemsRemaining > 0)
+                {
+                    string itemNumber = kvp.Key;
+                    int itemsRemaining = kvp.Value.HowManyItemsRemaining;
+                    string productName = kvp.Value.YummyName;
+                    string price = kvp.Value.MoneyMoneyPrice.ToString();
+
+
+                    if (itemsRemaining == 0)
+                    {
+                        Console.WriteLine(String.Format("{0,6}\t  |  {1,-18}    |{2,15}", itemNumber, productName, " **SOLD OUT**" ));
+                    }
+                    else
+                        Console.WriteLine(String.Format("{0,6}\t  |  {1,-18}    |{2,4}   |  ${3,0}" , itemNumber, productName, itemsRemaining ,price ));
+                }
+            }
         }
     }
 }
-                        /*
-                    int lineNum = 1;
-                    //ADDING EACH LINE TO ITS OWN ARRAY
-                    string hello = new string(lineContents);
-                    ItemList.Add(hello);
-                    string[] splitLine = hello.Split("|");
-                    //ITEM CHARACTERISTICS
-                    string buttonNumber = splitLine[0];
-                    string name = splitLine[1];
-                    decimal price = decimal.Parse(splitLine[2]);
-                    string type = splitLine[3];
-                    lineNum++;
-                    */

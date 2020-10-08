@@ -11,7 +11,6 @@ namespace Capstone
 
             public decimal MoneyMoneyPrice { get; set; }
 
-
             public int HowManyItemsRemaining { get; set; }
 
 
