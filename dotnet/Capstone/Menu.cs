@@ -10,18 +10,9 @@ namespace Capstone
 
         public static void BalanceStuff()
         {
-            Items.DisplayItems();
-
-           
-            
-            
-            
-            
-            
             // Console.WriteLine("\nCURRENT BALANCE : ${0}", "Balance\n");
             Console.WriteLine("\n1) PURCHASE");
             Console.WriteLine("\n2) DEPOSIT");
-
 
 
 
