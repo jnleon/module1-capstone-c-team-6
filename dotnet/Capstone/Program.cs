@@ -25,6 +25,7 @@ namespace Capstone
                 }
                 else if (selection == MAIN_MENU_OPTION_PURCHASE)
                 {
+                    Menu.BalanceStuff();
                     //do the purchase (probably should call a method to do this too)
                     //if (balance == 0)
                     //{
