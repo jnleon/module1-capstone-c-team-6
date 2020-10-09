@@ -10,18 +10,17 @@ namespace Capstone
         public decimal Balance { get; set; } = 0.00M;
 
         Dictionary<string, ItemProperties> ItemsDicKeyValue = new Dictionary<string, ItemProperties>();
-
+        List<string> FileLog = new List<string>();
 
         public void StartVendingMachine()
         {
             Console.Clear();
-            Console.Write("\n");
+            // string directoryJuan = @"C:\Users\Student\Workspace\module1-capstone-c-team-6\Example Files\Inventory.txt";
+            Console.WriteLine("\nPlease select the file path >>> ");
+            string inputFilePath = Console.ReadLine();
 
-            //ask user for path
-            string directoryZach = @"C:\Users\Zachary\Workspace\module1-capstone-c-team-6\Example Files\Inventory.txt";
-            string directoryJuan = @"C:\Users\Student\Workspace\module1-capstone-c-team-6\Example Files\Inventory.txt";
 
-            using (StreamReader sr = new StreamReader(directoryZach))
+            using (StreamReader sr = new StreamReader(inputFilePath))
             {
                 while (!sr.EndOfStream)
                 {
@@ -94,7 +93,7 @@ namespace Capstone
             Console.WriteLine("1. Purchase");
             Console.WriteLine("2. Deposit");
             Console.WriteLine("3. Finish Transaction");
-            Console.Write("Please choose an option >>> ");
+            Console.Write("\n\nPlease choose an option >>> ");
             int inputForMenu = int.Parse(Console.ReadLine());
 
             if (inputForMenu == 1)
@@ -106,6 +105,9 @@ namespace Capstone
                 Console.WriteLine("\nCurrent Balace: " + Balance);
                 Console.Write("How much in whole dollar amounts do you want to add to your account >>> ");
                 decimal amountToDeposit = decimal.Parse(Console.ReadLine());
+
+                FileLog.Add(DateTime.Now + " " + "FEED MONEY :"  + "$" +amountToDeposit + " $"+ Balance);
+
                 Deposit(amountToDeposit);
                 Console.Write("\n");
                 SubPurchaseMenuStart();
@@ -138,24 +140,23 @@ namespace Capstone
                                 Balance -= kvp.Value.ItemPrice;
                                 if (keyInput.Contains("A"))
                                 {
-                                    Audit();
+                                  //  FileLog.Add(kvp.Key)
+
                                     Console.Write("Crunch Crunch, Yum!\n\n");
                                 }
                                 if (keyInput.Contains("B"))
                                 {
-                                    Audit();
                                     Console.Write("Munch Munch, Yum!\n\n");
                                 }
                                 else if (keyInput.Contains("C"))
                                 {
-                                    Audit();
                                     Console.Write("Glug Glug, Yum!\n\n");
                                 }
                                 else if (keyInput.Contains("D"))
                                 {
-                                    Audit();
                                     Console.Write("Chew Chew, Yum!\n\n");
                                 }
+                                FileLog.Add(DateTime.Now+ " " + kvp.Value.ItemName+ ": $"+kvp.Value.ItemPrice +" $" +Balance);
                             }
                             else 
                             { 
@@ -185,7 +186,6 @@ namespace Capstone
 
         public decimal Deposit(decimal amountToDeposit)
         {
-            Audit();
             return Balance += amountToDeposit;
         }
 
@@ -198,6 +198,7 @@ namespace Capstone
             decimal totalDimes = 0;
             decimal totalNickels = 0;
 
+           decimal  BalanceBefore = Balance;
             if (Balance > 0.24M)
             {
                 totalQuarters = Math.Floor(Balance / quarters);
@@ -215,13 +216,27 @@ namespace Capstone
             }
             Console.Write("\nChange back: Quarters {0} , Dimes {1}, Nickels {2}\n", totalQuarters, totalDimes, totalNickels);
             Balance = 0;
-            Audit();
-            return Balance;
-        }
 
-        public void Audit()
-        {
-            return;
-        }
-    }
-}
+            FileLog.Add(DateTime.Now + " GIVE CHANGE: $"+ BalanceBefore+" $0.00");
+
+            //using (StreamWriter sw1 = new StreamWriter("Log.txt",true))
+            //{
+            //    sw1.WriteLine(FileLog);
+
+            //}
+
+            using (StreamWriter tw = new StreamWriter("Log.txt"))
+            {
+                foreach (String s in FileLog)
+                    tw.WriteLine(s);
+            }
+
+
+
+            return Balance;
+           
+
+
+            }
+            }
+            }
