@@ -16,24 +16,22 @@ namespace Capstone
         }
         public void Run()
         {
+            VendingMachine vendingMachine = new VendingMachine();
+            vendingMachine.StartVendingMachine();
             while (true)
             {
                 String selection = (string)ui.PromptForSelection(MAIN_MENU_OPTIONS);
                 if (selection == MAIN_MENU_OPTION_DISPLAY_ITEMS)
                 {
-                    Items.DisplayItems();
+                    vendingMachine.DisplayVendingMachine();
                 }
                 else if (selection == MAIN_MENU_OPTION_PURCHASE)
                 {
-                    Menu.BalanceStuff();
-                    //do the purchase (probably should call a method to do this too)
-                    //if (balance == 0)
-                    //{
-                    //}
-                    //else { }
+                    vendingMachine.SubPurchaseMenuStart();
                 }
                 else if (selection == MAIN_MENU_OPTION_FINISHED)
                 {
+                    Console.Clear();
                     break;
                 }
             }
