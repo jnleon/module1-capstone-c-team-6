@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+/*
+C:\Users\Student\Workspace\module1-capstone-c-team-6\Example Files\Inventory.txt
+ */
 namespace Capstone
 {
     public class VendingMachine
@@ -11,55 +13,59 @@ namespace Capstone
 
         Dictionary<string, ItemProperties> ItemsDicKeyValue = new Dictionary<string, ItemProperties>();
         List<string> FileLog = new List<string>();
-
         public void StartVendingMachine()
         {
             Console.Clear();
-            // string directoryJuan = @"C:\Users\Student\Workspace\module1-capstone-c-team-6\Example Files\Inventory.txt";
-            Console.WriteLine("\nPlease select the file path >>> ");
+            RetryPoint:
+            Console.WriteLine("Please select the file path >>> ");
             string inputFilePath = Console.ReadLine();
-
-
-            using (StreamReader sr = new StreamReader(inputFilePath))
-            {
-                while (!sr.EndOfStream)
+                try
                 {
-                    string lineContents = sr.ReadLine();
-
-                    string[] items = lineContents.Split("|");
-
-                    string itemNumber = items[0];
-                    string itemName = items[1];
-
-                    int itemsLeftInStock = 5;
-
-                    decimal itemPrice = decimal.Parse(items[2]);
-                    ItemProperties valueItem;
-
-                    switch (items[3])
+                    using (StreamReader sr = new StreamReader(inputFilePath))
                     {
-                        case "Chip":
-                            valueItem = new ItemType.Chip(itemName, itemPrice, itemsLeftInStock);
-                            break;
+                        while (!sr.EndOfStream)
+                        {
+                            string lineContents = sr.ReadLine();
 
-                        case "Candy":
-                            valueItem = new ItemType.Candy(itemName, itemPrice, itemsLeftInStock);
-                            break;
+                            string[] items = lineContents.Split("|");
 
-                        case "Drink":
-                            valueItem = new ItemType.Drink(itemName, itemPrice, itemsLeftInStock);
-                            break;
+                            string itemNumber = items[0];
+                            string itemName = items[1];
+                            int itemsLeftInStock = 5;
 
-                        default:
-                            valueItem = new ItemType.Gum(itemName, itemPrice, itemsLeftInStock);
-                            break;
+                            decimal itemPrice = decimal.Parse(items[2]);
+                            ItemProperties valueItem;
+
+                            switch (items[3])
+                            {
+                                case "Chip":
+                                    valueItem = new ItemType.Chip(itemName, itemPrice, itemsLeftInStock);
+                                    break;
+
+                                case "Candy":
+                                    valueItem = new ItemType.Candy(itemName, itemPrice, itemsLeftInStock);
+                                    break;
+
+                                case "Drink":
+                                    valueItem = new ItemType.Drink(itemName, itemPrice, itemsLeftInStock);
+                                    break;
+
+                                default:
+                                    valueItem = new ItemType.Gum(itemName, itemPrice, itemsLeftInStock);
+                                    break;
+                            }
+                            ItemsDicKeyValue.Add(items[0], valueItem);
+                        }
                     }
-                    ItemsDicKeyValue.Add(items[0], valueItem);
                 }
-
-            } 
+                catch (Exception )
+                {
+                Console.WriteLine("\n ***" + inputFilePath + " is not a valid option ***\n");
+                goto RetryPoint;
+                }
+        Console.Clear();
         }
-            public void DisplayVendingMachine()
+        public void DisplayVendingMachine()
             {
                 Console.WriteLine(String.Format("\n{0, 0} |  {1,-21} | {2,-5} |  {3,0}", " ITEM KEY", "PRODUCT NAME", "STOCK", "PRICE"));
                 Console.Write("---------------------------------------------------------\n");
@@ -82,66 +88,90 @@ namespace Capstone
                     }
                 }
             }
-
         public void SubPurchaseMenuStart()
         {
+
+             subPurchaseMenuError:
+
             if (Balance == 0)
             {
                 Console.WriteLine("\n**ADD MONEY FIRST**");
             }
-            Console.WriteLine("Current Balace: " + Balance);
+            Console.WriteLine("Current Balace: $" + Balance);
             Console.WriteLine("1. Purchase");
             Console.WriteLine("2. Deposit");
             Console.WriteLine("3. Finish Transaction");
             Console.Write("\n\nPlease choose an option >>> ");
-            int inputForMenu = int.Parse(Console.ReadLine());
-
-            if (inputForMenu == 1)
+            var inputError = (Console.ReadLine());
+            try
             {
-                PurchaseMenuStart();
+                int inputForMenu = int.Parse(inputError);
+            
+                if (inputForMenu == 1)
+                {
+                    PurchaseMenuStart();
+                }
+                if (inputForMenu == 2)
+                {
+                wrongbalance:
+
+                    Console.WriteLine("\nCurrent Balace: $" + Balance);
+                    Console.Write("How much in whole dollar amounts do you want to add to your account >>> ");
+                    decimal amountToDeposit = decimal.Parse(Console.ReadLine());
+                    try
+                    {
+                        if (amountToDeposit <= 0)
+                        {
+                            throw new Exception();
+                        }
+                        FileLog.Add(DateTime.Now + " " + "FEED MONEY :" + "$" + amountToDeposit + " $" + Balance);
+
+                        Deposit(amountToDeposit);
+                        Console.Write("\n");
+                        Console.Clear();
+                        SubPurchaseMenuStart();
+                    }
+                    catch (Exception )
+                    {
+                        Console.WriteLine("\n ***" + amountToDeposit + " is not a valid option ***\n");
+                        goto wrongbalance;
+                    }
+                }
+                if (inputForMenu == 3)
+                {
+                    giveChange();
+                }
             }
-            if (inputForMenu == 2)
+            catch (Exception)
             {
-                Console.WriteLine("\nCurrent Balace: " + Balance);
-                Console.Write("How much in whole dollar amounts do you want to add to your account >>> ");
-                decimal amountToDeposit = decimal.Parse(Console.ReadLine());
-
-                FileLog.Add(DateTime.Now + " " + "FEED MONEY :"  + "$" +amountToDeposit + " $"+ Balance);
-
-                Deposit(amountToDeposit);
-                Console.Write("\n");
-                SubPurchaseMenuStart();
-            }
-            if (inputForMenu == 3)
-            {
-                giveChange();
+                Console.Clear();
+                Console.WriteLine("\n **is "+ inputError + " not a valid option ***\n");
+                goto subPurchaseMenuError;
             }
         }
-
         public void PurchaseMenuStart()
         {
             DisplayVendingMachine();
-            Console.WriteLine("\nCurrent Balace: " + Balance);
+            Console.WriteLine("\nCurrent Balace: $" + Balance);
             Console.Write("What item do you want to purchase >>> ");
             string keyInput = Console.ReadLine();
+
 
             if (Balance != 0)
             {
                 foreach (KeyValuePair<string, ItemProperties> kvp in ItemsDicKeyValue)
                 {
+                   
                     if (kvp.Key == keyInput)
                     {
                         if (kvp.Value.ItemPrice < Balance)
                         {
                             if (kvp.Value.ItemsLeftInStock > 0)
                             {
-                                //Not working
                                 kvp.Value.ItemsLeftInStock--;
                                 Balance -= kvp.Value.ItemPrice;
                                 if (keyInput.Contains("A"))
                                 {
-                                  //  FileLog.Add(kvp.Key)
-
                                     Console.Write("Crunch Crunch, Yum!\n\n");
                                 }
                                 if (keyInput.Contains("B"))
@@ -156,7 +186,8 @@ namespace Capstone
                                 {
                                     Console.Write("Chew Chew, Yum!\n\n");
                                 }
-                                FileLog.Add(DateTime.Now+ " " + kvp.Value.ItemName+ ": $"+kvp.Value.ItemPrice +" $" +Balance);
+                                FileLog.Add(DateTime.Now + " " + kvp.Value.ItemName + ": $" + kvp.Value.ItemPrice + " $" + Balance);
+
                             }
                             else 
                             { 
@@ -170,6 +201,7 @@ namespace Capstone
                             SubPurchaseMenuStart();
                         }
                     }
+                
                 }
                 SubPurchaseMenuStart();
             }
@@ -178,7 +210,6 @@ namespace Capstone
                 SubPurchaseMenuStart();
             }
         }
-
         public void Buy(decimal currentMoney)
         {
             Balance -= currentMoney;
@@ -219,24 +250,13 @@ namespace Capstone
 
             FileLog.Add(DateTime.Now + " GIVE CHANGE: $"+ BalanceBefore+" $0.00");
 
-            //using (StreamWriter sw1 = new StreamWriter("Log.txt",true))
-            //{
-            //    sw1.WriteLine(FileLog);
-
-            //}
-
             using (StreamWriter tw = new StreamWriter("Log.txt"))
             {
                 foreach (String s in FileLog)
                     tw.WriteLine(s);
             }
 
-
-
             return Balance;
-           
-
-
             }
             }
             }

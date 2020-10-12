@@ -8,7 +8,6 @@ namespace Capstone.ItemType
     {
         public Candy(string itemName, decimal itemPrice, int itemsLeftInStock) : base(itemName, itemPrice, itemsLeftInStock)
         {
-
         }
     }
 }

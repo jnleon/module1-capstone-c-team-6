@@ -47,7 +47,7 @@ namespace Capstone
                     choice = options[selectedOption - 1];
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // eat the exception, an error message will be displayed below since choice will be null
             }
